@@ -6,10 +6,9 @@ def signal_handler(signal, frame):
   print("closing program")
   SerialPort.close()
   sys.exit(0)
-COM=input("COM5\n")
-BAUD=input("9600\n")
+COM=input("Enter the COM Port\n")
+BAUD=input("Enter the Baudrate\n")
 SerialPort = serial.Serial(COM,BAUD,timeout=1)
-
 while (1):
   try:
      OutgoingData=input('> ')
