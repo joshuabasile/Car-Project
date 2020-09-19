@@ -20,69 +20,50 @@ class Car:
         self.draw(canvas)
 
     def draw(self, canvas):
-        # remove pacman from the list if the list is not empty
+        # remove car from the list if the list is not empty
         if len(car_queue) != 0: # len() return amount of data in the parameter
             canvas.delete(car_queue[0]) # delete pacman from canvas. If don't do this, then previous pacman will stay there
             car_queue.pop() 
 
-        size = 
+        size.x = 25.5
+        size.y = 24.3
+        size = [size.x, size.y]
+
         # create blue car on canvas. create_square(x1, y1, x2, y2) draws square 
         # Topleft is at (x1,y1). Bottomright at (x2,y2)
-        x = canvas.create_rectangle(self.x - size, self.y - size, self.x + size, self.y + size, fill='blue')
+        x = canvas.create_rectangle(self.x - size.x, self.y - size.y, self.x + size.x, self.y + size.y, fill='blue')
         # store car at the list
         car_queue.append(x)
 
-class Ghost:
+class Obstacle:
     def __init__ (self, canvas):
         self.x = random.randrange(WINDOW_WIDTH)
         self.y = random.randrange(WINDOW_HEIGHT)
-        self.draw(canvas) # random position for every new game
+        self.draw(canvas) # random position for 1 obstacle (TEST!!!)
     
     def draw(self, canvas):
-        # remove ghost from the list if the list is not empty
-        if len(ghost_queue) != 0: # len() return amount of data in the parameter
-            canvas.delete(ghost_queue[0]) # delete ghost from canvas. If don't do this, then previous ghost will stay there
-            ghost_queue.pop() 
+        # remove obstacle from the list if the list is not empty
+        if len(obstacle_queue) != 0: # len() return amount of data in the parameter
+            obstacle_queue.pop()
 
-        size = 30
-        # create white ghost on canvas. create_square(x1, y1, x2, y2) draws a square.
+        size.x = 19.3
+        size.y = 16.5
+        # create white obstacle on canvas. create_square(x1, y1, x2, y2) draws a square.
         # Top left is at (x1, y1). Bottom right at (x2, y2)
         x = canvas.create_rectangle(self.x - size, self.y - size, self.x + size, self.y + size, fill='white')
-        # store ghost at the list
-        ghost_queue.append(x)
+        # store obstacle at the list
+        obstacle_queue.append(x)
 
-# check if pacman is on top of dot or not
-def check2(ghost, pacman, canvas, window):
-    if ghost.x - 30 <= pacman.x <= ghost.x + 30\
-        and ghost.y - 30 <= pacman.y <= ghost.y + 30:
-        canvas.delete(pac_queue[0]) # erase pacmnan from canvas
-        pac_queue.pop() # remove pacman from list
-        print('GAME OVER!!')
+# check if car is close to obstacle
+def check(obstacle, car, canvas, window):
+    if obstacle.x - 4 <= car.x <= obstacle.x + 4\  
+    #not sure these numbers are good enough ^^^
+        and obstacle.y - 4 <= car.y <= obstacle.y + 4:
+        #not sure if these numbers are good enough^^^
+        canvas.delete(car[0]) # erase car from canvas
+        car_queue.pop() # remove car from list
+        ## code for moving around obstacle
         exit()
     
 
-    window.after(100, check2, pacman, ghost, canvas, window)
-
-
-def main():
-    window = tk.Tk() # create window pop-up
-    canvas = tk.Canvas(window, width=WINDOW_WIDTH, height=WINDOW_HEIGHT, bg='black') # create Canvas widget for drawing
-    canvas.pack() # pack() organize, aka update, widgets onto canvas
-
-    pacman = Pacman(canvas) # pass in canvas so pacman can be drawn
-    window.bind("<KeyPress-Left>", lambda event: pacman.moveLeft(event, canvas)) # need to pass event, otherwise won't work
-    window.bind("<KeyPress-Right>", lambda event: pacman.moveRight(event, canvas))
-    window.bind("<KeyPress-Up>", lambda event: pacman.moveUp(event, canvas))
-    window.bind("<KeyPress-Down>", lambda event: pacman.moveDown(event, canvas))
-
-    dot = Dot(canvas)
-    ghost = Ghost(canvas)
-
-    window.after(100, check1, pacman, dot, canvas, window) # call check() to check dot&pacman after 100 milliseconds
-    window.after(100, check2, pacman, ghost, canvas, window) #call check() to check ghost&pacman afrer 100 milliseconds
-    window.mainloop() # tk.mainloop() -> keep looping until there's an update
-
-main()
-
-
-
+    window.after(100, check, car, obstacle, canvas, window)
