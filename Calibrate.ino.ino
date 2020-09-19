@@ -5,7 +5,6 @@ const int trigPin = 3;
 const int echoPin = 4;
 long duration;
 
-void setup() 
 {
   //setup code here, runs once
   pinMode(trigPin, OUTPUT);
