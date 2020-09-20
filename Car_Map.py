@@ -26,16 +26,20 @@ class Car:
     def __init__(self, canvas):
         # initialize position of car and map it on canvas
         # <self> refers to the class itself. Below codes are essentially "attributes" for Car's class
-        sensor_string = arduino.read() # !!! make sure to have an output for arduino at the start of the arduino !!!
+        sensor_string = SerialPort.read() # !!! make sure to have an output for arduino at the start of the arduino !!!
         self.sensors = sensor_string.split(',')
         self.width = 25.5
         self.height = 24.3
-        self.sensors = [0, WINDOW_HEIGHT-self.height, WINDOW_HEIGHT-self.height, WINDOW_WIDTH-self.width]
         # TEST: self.sensors = [0, WINDOW_HEIGHT-self.height, WINDOW_HEIGHT-self.height, WINDOW_WIDTH-self.width]
         coords = find_coords(self.width, self.height, self.sensors[0], self.sensors[1], self.sensors[2], self.sensors[3])
         self.x = coords[0]
         self.y = coords[1]
         self.draw(canvas)
+
+    def getx(self):
+        return self.x
+    def gety(self):
+        return self.y
 
     def draw(self, canvas):
         # remove car from the list if the list is not empty
@@ -51,9 +55,6 @@ class Car:
         x = canvas.create_rectangle(self.x, WINDOW_HEIGHT-self.height-self.y, self.x + self.width, WINDOW_HEIGHT-self.y, fill='blue')
         # store car at the list
         car_queue.append(x)
-
-    def move(self, x, y, canvas):
-        # moves car to next spot based on distance 
 
 class Obstacle:
     def __init__ (self, x, y, canvas):
@@ -82,8 +83,9 @@ class Obstacle:
     
     def draw(self, canvas):
         # remove obstacle from the list if the list is not empty
-        # if len(obstacle_queue) != 0: # len() return amount of data in the parameter
-        #     obstacle_queue.pop()
+        if len(obstacle_queue) != 0: # len() return amount of data in the parameter
+            canvas.delete(obstacle_queue[0])
+            obstacle_queue.pop()
         # create white obstacle on canvas. create_square(x1, y1, x2, y2) draws a square.
         # Top left is at (x1, y1). Bottom right at (x2, y2)
 
@@ -94,7 +96,7 @@ class Obstacle:
         # store obstacle at the list
         obstacle_queue.append(x)
 
-def check(obstacle, obstacle_tracker, canvas, window):
+def check(car, obstacle_length, canvas, window):
     ### don't think we need this code since arduino does it for us
 
     # if obstacle.x - 4 <= car.x <= obstacle.x + 4 \
@@ -104,14 +106,19 @@ def check(obstacle, obstacle_tracker, canvas, window):
     #    car_queue.pop() # remove car from list
         ## code for moving around obstacle
 
+    # update/create new car - make the car move!
+    new_car = Car(canvas)
+    car_queue.append(new_car)
+
     # check sensors for obstacle
-    sensor_string = arduino.read()
+    sensor_string = SerialPort.read()
     sensors = sensor_string.split(',')
     num_of_turns = sensors(4)
 
-    
+    # find the distance between the car and the object
 
-    window.after(100, check, obstacle, obstacle_tracker, canvas, window)
+
+    window.after(100, check, car, obstacle_tracker, canvas, window)
 
 def main():
 
@@ -122,12 +129,12 @@ def main():
     canvas.pack() # pack() organize, aka update, widgets onto canvas
 
     # create car
-    # car = Car(canvas)
+    car = Car(canvas)
 
     # car starts with nothing but wall in the right sensor
-    obstacle_tracker = 0
+    obstacle_length = 0
 
-    window.after(100, check, obstacle, obstacle_tracker, canvas, window) # call check() to check car and obstacle after 100 milliseconds
+    window.after(100, check, car, obstacle_length, canvas, window) # call check() to check car and obstacle after 100 milliseconds
     window.mainloop() # tk.mainloop() -> keep looping until there's an update
 
 main()
