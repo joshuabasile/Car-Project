@@ -1,3 +1,5 @@
+int turn_counter = 0;
+
 ///////////////////////// SENSORS
 
 //Sensor 1
@@ -46,6 +48,8 @@ const int motorPin4_H2 = 13;
 
 void setup() 
 {
+  Serial.begin(9600);
+  
   //Set pin modes for sensors
   pinMode(trigPin1, OUTPUT);
   pinMode(echoPin1, INPUT);
@@ -79,8 +83,21 @@ void setup()
 
 void loop() 
 {
+  //Read distance on sensor 1, put value into array
+  digitalWrite(trigPin1, LOW);
+  delayMicroseconds(2);
+  
+  digitalWrite(trigPin1, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin1, LOW);
+
+  duration1 = pulseIn(echoPin1, HIGH);
+  double distance1 = (double)duration1 * 345 / 2 / 1000000;
+
+  
   //Read distance on sensor 2
-  digitalWrite(trigPin2, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin1, LOW);
   delayMicroseconds(2);
   
   digitalWrite(trigPin2, HIGH);
@@ -102,13 +119,29 @@ void loop()
   duration3 = pulseIn(echoPin3, HIGH);
   double distance3 = (double)duration3 * 345 / 2 / 1000000;
 
+  //Read distance on sensor 4
+  delayMicroseconds(2);
+  digitalWrite(trigPin4, LOW);
+  delayMicroseconds(2);
+  
+  digitalWrite(trigPin4, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin4, LOW);
+  
+  duration4 = pulseIn(echoPin4, HIGH);
+  double distance4 = (double)duration4 * 345 / 2 / 1000000;
+
   //Have car move if front of car reaches wall
   if (distance2 > 0.07 && distance3 > 0.07) {
     forward();
   }
   else {
+    turn_counter++;
     turn_right();
   }
+
+  String data = String(String(distance1) + "," + String(distance2) + "," + String(distance3) + "," + String(distance4) + "," + String(turn_counter));
+  
 }
 
 void forward()
