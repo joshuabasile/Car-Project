@@ -26,9 +26,9 @@ class Car:
     def __init__(self, canvas):
         # initialize position of car and map it on canvas
         # <self> refers to the class itself. Below codes are essentially "attributes" for Car's class
-        sensor_string = SerialPort.readline() # !!! make sure to have an output for arduino at the start of the arduino !!!
+        sensor_string = SerialPort.readline() # !!! make sure to have an output at the start of the arduino's run !!!
         sensor_string_decoded = str(sensor_string[0:lend(sensor_string)].decode('utf-8')
-        self.sensors = sensor_string_decoded.split(',')
+        sensors = sensor_string_decoded.split(',')
         for i in range(0, len(sensors)): # convert to ints
             sensors[i] = double(sensors[i])
         self.width = 25.5
@@ -79,7 +79,7 @@ class Obstacle:
         self.draw(canvas)
 
     def get_numofsides(self):
-        return numofsides
+        return self.numofsides
 
     def set_side(self, side_length, canvas):
         if (self.left == 0):
@@ -178,7 +178,7 @@ def check(car, obstacle_length, obstacle_start, canvas, window):
             obstacle_start = (0,0)
                 
 
-
+    window.update()
     window.after(100, check, car, obstacle_length, obstacle_start, canvas, window)
 
 def main():
