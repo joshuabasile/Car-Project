@@ -84,16 +84,16 @@ class Obstacle:
     def set_side(self, side_length, canvas):
         if (self.left == 0):
             self.left = side_length
-            numofsides = 1
+            self.numofsides = 1
         elif (self.top == 0):
             self.top = side_length
-            numofsides = 2
+            self.numofsides = 2
         elif (self.right == 0):
             self.right = side_length
-            numofsides = 3
+            self.numofsides = 3
         elif (self.bottom == 0):
             self.bottom = side_length
-            numofsides = 4
+            self.numofsides = 4
             # try to draw rectangle now that we have set the side lengths
             self.draw(canvas)
     
