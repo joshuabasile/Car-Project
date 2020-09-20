@@ -75,38 +75,40 @@ void setup()
   analogWrite(enableB_H1, 255);
   analogWrite(enableA_H2, 255);
   analogWrite(enableB_H2, 255);
-
-  forward();
-  delay(2000);
-  turn_right();
-  delay(3000);
-  
-  forward();
-  delay(2000);
-  turn_left();
-  delay(3000);
-
-  forward();
-  delay(2000);
-  stop_moving();
 }
 
 void loop() 
 {
-  //digitalWrite(trigPin2, LOW);
-  //delayMicroseconds(2);
+  //Read distance on sensor 2
+  digitalWrite(trigPin2, LOW);
+  delayMicroseconds(2);
   
-  //digitalWrite(trigPin2, HIGH);
-  //delayMicroseconds(10);
-  //digitalWrite(trigPin2, LOW);
+  digitalWrite(trigPin2, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin2, LOW);
   
-  //duration2 = pulseIn(echoPin2, HIGH);
-  //double distance2 = (double)duration2 * 345 / 2 / 1000000;
+  duration2 = pulseIn(echoPin2, HIGH);
+  double distance2 = (double)duration2 * 345 / 2 / 1000000;
+  
+  //Read distance on sensor 3
+  delayMicroseconds(2);
+  digitalWrite(trigPin3, LOW);
+  delayMicroseconds(2);
+  
+  digitalWrite(trigPin3, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin3, LOW);
+  
+  duration3 = pulseIn(echoPin3, HIGH);
+  double distance3 = (double)duration3 * 345 / 2 / 1000000;
 
-  //if (distance2 > 0.1)
-    //forward();
-  //else
-    //stop_moving();
+  //Have car move if front of car reaches wall
+  if (distance2 > 0.07 && distance3 > 0.07) {
+    forward();
+  }
+  else {
+    turn_right();
+  }
 }
 
 void forward()
@@ -135,6 +137,8 @@ void turn_right()
   digitalWrite(motorPin2_H2, HIGH);
   digitalWrite(motorPin3_H2, HIGH);
   digitalWrite(motorPin4_H2, LOW);
+
+  delay(2900);
 }
 
 void turn_left()
@@ -149,6 +153,8 @@ void turn_left()
   digitalWrite(motorPin2_H2, LOW);
   digitalWrite(motorPin3_H2, LOW);
   digitalWrite(motorPin4_H2, HIGH);
+
+  delay(2900);
 }
 
 void stop_moving()
