@@ -32,11 +32,13 @@ class Car:
         self.width = 25.5
         self.height = 24.3
         sensor_string = SerialPort.readline()  # !!! make sure to have an output at the start of the arduino's run !!!
-        if (sensor_string):
-            sensor_string_decoded = str(sensor_string.decode('utf-8'))
-            sensors = sensor_string_decoded.rstrip().split(',')
+        sensor_string_decoded = str(sensor_string.decode('utf-8'))
+        sensors = sensor_string_decoded.rstrip().split(',')
+        if (sensors[0] != ''):
             for i in range(0, len(sensors)):  # convert to ints
                 sensors[i] = float(sensors[i])
+
+            print(sensors)
             # TEST: self.sensors = [0, WINDOW_HEIGHT-self.height, WINDOW_HEIGHT-self.height, WINDOW_WIDTH-self.width]
             coords = find_coords(self.width, self.height, sensors[0], sensors[1], sensors[2], sensors[3])
             self.x = coords[0]
@@ -213,8 +215,7 @@ def main():
     obstacle_length = 0
     obstacle_start = [0, 0]
 
-    window.after(100, check, car, obstacle_length, obstacle_start, canvas,
-                 window)  # call check() to check car and obstacle after 100 milliseconds
+    window.after(100, check, car, obstacle_length, obstacle_start, SerialPort, canvas, window)  # call check() to check car and obstacle after 100 milliseconds
     window.mainloop()  # tk.mainloop() -> keep looping until there's an update
 
 
