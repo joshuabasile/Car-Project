@@ -27,14 +27,14 @@ class Car:
         # initialize position of car and map it on canvas
         # <self> refers to the class itself. Below codes are essentially "attributes" for Car's class
         sensor_string = SerialPort.readline() # !!! make sure to have an output at the start of the arduino's run !!!
-        sensor_string_decoded = str(sensor_string[0:lend(sensor_string)].decode('utf-8'))
+        sensor_string_decoded = str(sensor_string[0:len(sensor_string)].decode('utf-8'))
         sensors = sensor_string_decoded.split(',')
         for i in range(0, len(sensors)): # convert to ints
-            sensors[i] = double(sensors[i])
+            sensors[i] = float(sensors[i])
         self.width = 25.5
         self.height = 24.3
         # TEST: self.sensors = [0, WINDOW_HEIGHT-self.height, WINDOW_HEIGHT-self.height, WINDOW_WIDTH-self.width]
-        coords = find_coords(self.width, self.height, self.sensors[0], self.sensors[1], self.sensors[2], self.sensors[3])
+        coords = find_coords(self.width, self.height, sensors[0], sensors[1], sensors[2], sensors[3])
         self.x = coords[0]
         self.y = coords[1]
         self.draw(canvas)
@@ -43,9 +43,9 @@ class Car:
         return self.x
     def gety(self):
         return self.y
-    def get_width():
+    def get_width(self):
         return self.width
-    def get_height():
+    def get_height(self):
         return self.height
 
     def draw(self, canvas):
@@ -128,10 +128,10 @@ def check(car, obstacle_length, obstacle_start, canvas, window):
 
     # check sensors for obstacle
     sensor_string = SerialPort.readline() # !!! make sure to have an output at the start of the arduino's run !!!
-    sensor_string_decoded = str(sensor_string[0:lend(sensor_string)].decode('utf-8'))
+    sensor_string_decoded = str(sensor_string[0:len(sensor_string)].decode('utf-8'))
     sensors = sensor_string_decoded.split(',')
     for i in range(0, len(sensors)): # convert to doubles
-        sensors[i] = double(sensors[i])
+        sensors[i] = float(sensors[i])
     num_of_turns = sensors(4)
 
     # find position of obstacle
@@ -155,11 +155,11 @@ def check(car, obstacle_length, obstacle_start, canvas, window):
             elif (num_of_turns > 0 and num_of_turns < 4):
                 # check to see if there is one object; if there is, then just add the side to it
                 obstacle_tracker = [0,0] # first item is the number of sides the highest is (furthest down the list), second is which object this corresponds to
-                if(len(obstacle_queue()) == 1):
+                if(len(obstacle_queue) == 1):
                     obstacle_queue[0].set_side(obstacle_length)
                 else:
                     # check to see if the number of sides on the first equals the number of sides on the last
-                    if (obstacle_queue[0].get_numofsides() == obstacle_queue(len(obstacle_queue)-1)).get_numofsides():
+                    if (obstacle_queue[0].get_numofsides() == obstacle_queue[len(obstacle_queue)-1].get_numofsides()):
                         # then, just add the side to the first object
                         obstacle_queue[0].set_side(obstacle_length)
                     else:
@@ -179,11 +179,9 @@ def check(car, obstacle_length, obstacle_start, canvas, window):
                 
 
     window.update()
-    window.after(100, check, car, obstacle_length, obstacle_start, canvas, window)
+    window.after(100, check, new_car, obstacle_length, obstacle_start, canvas, window)
 
 def main():
-
-    counter = 0
     
     window = tk.Tk() # create window pop-up
     canvas = tk.Canvas(window, width=WINDOW_WIDTH, height=WINDOW_HEIGHT, bg='black') # Canvas widget is for drawing
