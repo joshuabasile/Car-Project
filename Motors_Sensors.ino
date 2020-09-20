@@ -1,0 +1,166 @@
+///////////////////////// SENSORS
+
+//Sensor 1
+const int trigPin1 = 31;
+const int echoPin1 = 30;
+long duration1;
+
+//Sensor 2
+const int trigPin2 = 27;
+const int echoPin2 = 26;
+long duration2;
+
+//Sensor 3 
+const int trigPin3 = 23;
+const int echoPin3 = 22;
+long duration3;
+
+//Sensor 4
+const int trigPin4 = 35;
+const int echoPin4 = 34;
+long duration4; 
+
+///////////////////////// MOTORS
+
+//enable for H Bridge 1 (front of car)
+const int enableA_H1 = 2;
+const int enableB_H1 = 3;
+
+//Motor A_H1 (left)
+const int motorPin1_H1  = 4;  
+const int motorPin2_H1  = 5; 
+//Motor B_H1 (right)
+const int motorPin3_H1  = 7; 
+const int motorPin4_H1  = 6; 
+
+//enable for H bridge 2 (back of car)
+const int enableA_H2 = 8;
+const int enableB_H2 = 9;
+
+//Motor A_H2 (left)
+const int motorPin1_H2 = 11;
+const int motorPin2_H2 = 10;
+//Motor B_H2 (right)
+const int motorPin3_H2 = 12;
+const int motorPin4_H2 = 13;
+
+void setup() 
+{
+  //Set pin modes for sensors
+  pinMode(trigPin1, OUTPUT);
+  pinMode(echoPin1, INPUT);
+  pinMode(trigPin2, OUTPUT);
+  pinMode(echoPin2, INPUT);
+  pinMode(trigPin3, OUTPUT);
+  pinMode(echoPin3, INPUT);
+  pinMode(trigPin4, OUTPUT);
+  pinMode(echoPin4, INPUT);
+  
+  //Set pin modes for motors
+  pinMode(enableA_H1, OUTPUT);
+  pinMode(enableB_H1, OUTPUT);
+  pinMode(motorPin1_H1, OUTPUT);
+  pinMode(motorPin2_H1, OUTPUT);
+  pinMode(motorPin3_H1, OUTPUT);
+  pinMode(motorPin4_H1, OUTPUT);
+  pinMode(enableA_H2, OUTPUT);
+  pinMode(enableB_H2, OUTPUT);
+  pinMode(motorPin1_H2, OUTPUT);
+  pinMode(motorPin2_H2, OUTPUT);
+  pinMode(motorPin3_H2, OUTPUT);
+  pinMode(motorPin4_H2, OUTPUT);
+    
+  //Set enable pins for H Bridges
+  analogWrite(enableA_H1, 255);
+  analogWrite(enableB_H1, 255);
+  analogWrite(enableA_H2, 255);
+  analogWrite(enableB_H2, 255);
+
+  forward();
+  delay(2000);
+  turn_right();
+  delay(3000);
+  
+  forward();
+  delay(2000);
+  turn_left();
+  delay(3000);
+
+  forward();
+  delay(2000);
+  stop_moving();
+}
+
+void loop() 
+{
+  //digitalWrite(trigPin2, LOW);
+  //delayMicroseconds(2);
+  
+  //digitalWrite(trigPin2, HIGH);
+  //delayMicroseconds(10);
+  //digitalWrite(trigPin2, LOW);
+  
+  //duration2 = pulseIn(echoPin2, HIGH);
+  //double distance2 = (double)duration2 * 345 / 2 / 1000000;
+
+  //if (distance2 > 0.1)
+    //forward();
+  //else
+    //stop_moving();
+}
+
+void forward()
+{
+  //H Bridge 1
+  digitalWrite(motorPin1_H1, LOW);
+  digitalWrite(motorPin2_H1, HIGH);
+  digitalWrite(motorPin3_H1, LOW);
+  digitalWrite(motorPin4_H1, HIGH);
+  //H Bridge 2
+  digitalWrite(motorPin1_H2, LOW);
+  digitalWrite(motorPin2_H2, HIGH);
+  digitalWrite(motorPin3_H2, LOW);
+  digitalWrite(motorPin4_H2, HIGH);
+}
+
+void turn_right()
+{
+  //Motor A_H1 goes forward, Motor B_H1 goes backward
+  digitalWrite(motorPin1_H1, LOW);
+  digitalWrite(motorPin2_H1, HIGH);
+  digitalWrite(motorPin3_H1, HIGH);
+  digitalWrite(motorPin4_H1, LOW);
+  //Motor A_H2 goes forward, Motor B_H2 goes backward
+  digitalWrite(motorPin1_H2, LOW);
+  digitalWrite(motorPin2_H2, HIGH);
+  digitalWrite(motorPin3_H2, HIGH);
+  digitalWrite(motorPin4_H2, LOW);
+}
+
+void turn_left()
+{
+  //Motor A_H1 goes backward, Motor B_H1 goes forward
+  digitalWrite(motorPin1_H1, HIGH);
+  digitalWrite(motorPin2_H1, LOW);
+  digitalWrite(motorPin3_H1, LOW);
+  digitalWrite(motorPin4_H1, HIGH);
+  //Motor A_H2 goes backward, Motor B_H2 goes forward
+  digitalWrite(motorPin1_H2, HIGH);
+  digitalWrite(motorPin2_H2, LOW);
+  digitalWrite(motorPin3_H2, LOW);
+  digitalWrite(motorPin4_H2, HIGH);
+}
+
+void stop_moving()
+{
+  //H Bridge 1
+  digitalWrite(motorPin1_H1, LOW);
+  digitalWrite(motorPin2_H1, LOW);
+  digitalWrite(motorPin3_H1, LOW);
+  digitalWrite(motorPin4_H1, LOW);
+  //H Bridge 2
+  digitalWrite(motorPin1_H2, LOW);
+  digitalWrite(motorPin2_H2, LOW);
+  digitalWrite(motorPin3_H2, LOW);
+  digitalWrite(motorPin4_H2, LOW);
+}
