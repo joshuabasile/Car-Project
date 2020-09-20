@@ -144,7 +144,7 @@ def check(car, obstacle_length, obstacle_start, SerialPort, canvas, window):
     sensor_string_decoded = str(sensor_string.decode('utf-8'))
     sensors = sensor_string_decoded.rstrip().split(',')
     if (sensors[0] != ''):
-        new_car = Car(SerialPort, False, canvas)
+        new_car = Car(False, SerialPort, canvas)
         car_queue.append(new_car)
 
         for i in range(0, len(sensors)):  # convert to doubles
@@ -208,7 +208,7 @@ def main():
     SerialPort = serial.Serial("COM5", "9600", timeout=1)
 
     # create car
-    car = Car(SerialPort, True, canvas)
+    car = Car(True, SerialPort, canvas)
 
     # car starts with nothing but wall in the right sensor
     obstacle_length = 0
