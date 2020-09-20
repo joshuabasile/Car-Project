@@ -1,5 +1,6 @@
 import tkinter as tk # importing tkinter library so we can use graphics
 import random
+import serial
 
 
 # NOTE: Tkinter window's top left corner is (0,0). 
@@ -26,6 +27,7 @@ class Car:
     def __init__(self, canvas):
         # initialize position of car and map it on canvas
         # <self> refers to the class itself. Below codes are essentially "attributes" for Car's class
+        SerialPort = serial.Serial("COM5", "9600", timeout=1)
         sensor_string = SerialPort.readline() # !!! make sure to have an output at the start of the arduino's run !!!
         sensor_string_decoded = str(sensor_string[0:len(sensor_string)].decode('utf-8'))
         sensors = sensor_string_decoded.split(',')
@@ -127,6 +129,7 @@ def check(car, obstacle_length, obstacle_start, canvas, window):
     car_queue.append(new_car)
 
     # check sensors for obstacle
+    SerialPort = serial.Serial("COM5", "9600", timeout=1)
     sensor_string = SerialPort.readline() # !!! make sure to have an output at the start of the arduino's run !!!
     sensor_string_decoded = str(sensor_string[0:len(sensor_string)].decode('utf-8'))
     sensors = sensor_string_decoded.split(',')
