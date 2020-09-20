@@ -29,18 +29,22 @@ class Car:
         # initialize position of car and map it on canvas
         # <self> refers to the class itself. Below codes are essentially "attributes" for Car's class
         #SerialPort = serial.Serial("COM5", "9600", timeout=1)
-        sensor_string = SerialPort.readline()  # !!! make sure to have an output at the start of the arduino's run !!!
-        sensor_string_decoded = str(sensor_string.decode('utf-8'))
-        sensors = sensor_string_decoded.split(',')
-        for i in range(0, len(sensors)):  # convert to ints
-            sensors[i] = float(sensors[i])
         self.width = 25.5
         self.height = 24.3
-        # TEST: self.sensors = [0, WINDOW_HEIGHT-self.height, WINDOW_HEIGHT-self.height, WINDOW_WIDTH-self.width]
-        coords = find_coords(self.width, self.height, sensors[0], sensors[1], sensors[2], sensors[3])
-        self.x = coords[0]
-        self.y = coords[1]
-        self.draw(canvas)
+        sensor_string = SerialPort.readline()  # !!! make sure to have an output at the start of the arduino's run !!!
+        if (sensor_string):
+            sensor_string_decoded = str(sensor_string.decode('utf-8'))
+            sensors = sensor_string_decoded.rstrip().split(',')
+            for i in range(0, len(sensors)):  # convert to ints
+                sensors[i] = float(sensors[i])
+            # TEST: self.sensors = [0, WINDOW_HEIGHT-self.height, WINDOW_HEIGHT-self.height, WINDOW_WIDTH-self.width]
+            coords = find_coords(self.width, self.height, sensors[0], sensors[1], sensors[2], sensors[3])
+            self.x = coords[0]
+            self.y = coords[1]
+            self.draw(canvas)
+        else:
+            self.x = 0
+            self.y = 0
 
     def getx(self):
         return self.x
@@ -132,17 +136,13 @@ def check(car, obstacle_length, obstacle_start, SerialPort, canvas, window):
     #    car_queue.pop() # remove car from list
     ## code for moving around obstacle
 
-    # update/create new car - make the car move!
-    new_car = Car(canvas)
-    car_queue.append(new_car)
-
     # check sensors for obstacle
     #SerialPort = serial.Serial("COM5", "9600", timeout=1)
     sensor_string = SerialPort.readline()  # !!! make sure to have an output at the start of the arduino's run !!!
     if (sensor_string):
         sensor_string_decoded = str(sensor_string.decode('utf-8'))
         sensors = sensor_string_decoded.rstrip().split(',')
-        new_car = Car(canvas)
+        new_car = Car(SerialPort, canvas)
         car_queue.append(new_car)
 
         for i in range(0, len(sensors)):  # convert to doubles
