@@ -28,6 +28,8 @@ class Car:
         # <self> refers to the class itself. Below codes are essentially "attributes" for Car's class
         sensor_string = SerialPort.read() # !!! make sure to have an output for arduino at the start of the arduino !!!
         self.sensors = sensor_string.split(',')
+        for i in range(0, len(sensors)): # convert to ints
+            sensors[i] = int(sensors[i])
         self.width = 25.5
         self.height = 24.3
         # TEST: self.sensors = [0, WINDOW_HEIGHT-self.height, WINDOW_HEIGHT-self.height, WINDOW_WIDTH-self.width]
@@ -40,6 +42,10 @@ class Car:
         return self.x
     def gety(self):
         return self.y
+    def get_width():
+        return self.width
+    def get_height():
+        return self.height
 
     def draw(self, canvas):
         # remove car from the list if the list is not empty
@@ -83,9 +89,9 @@ class Obstacle:
     
     def draw(self, canvas):
         # remove obstacle from the list if the list is not empty
-        if len(obstacle_queue) != 0: # len() return amount of data in the parameter
-            canvas.delete(obstacle_queue[0])
-            obstacle_queue.pop()
+        # if len(obstacle_queue) != 0: # len() return amount of data in the parameter
+        #    canvas.delete(obstacle_queue[0])
+        #    obstacle_queue.pop()
         # create white obstacle on canvas. create_square(x1, y1, x2, y2) draws a square.
         # Top left is at (x1, y1). Bottom right at (x2, y2)
 
@@ -96,7 +102,7 @@ class Obstacle:
         # store obstacle at the list
         obstacle_queue.append(x)
 
-def check(car, obstacle_length, canvas, window):
+def check(car, obstacle_length, obstacle_start, canvas, window):
     ### don't think we need this code since arduino does it for us
 
     # if obstacle.x - 4 <= car.x <= obstacle.x + 4 \
@@ -113,12 +119,39 @@ def check(car, obstacle_length, canvas, window):
     # check sensors for obstacle
     sensor_string = SerialPort.read()
     sensors = sensor_string.split(',')
+    for i in range(0, len(sensors)): # convert to ints
+        sensors[i] = int(sensors[i])
     num_of_turns = sensors(4)
 
-    # find the distance between the car and the object
+    # find position of obstacle
+    obstacle_x = new_car.getx() + new_car.get_width() + sensors(3)
+    obstacle_y = new_car.gety() + new_car.get_height() - 12.3 # takse into account the placement of the sensors
+
+    # find out whether the object is a wall or not
+    is_wall = (sensors(0) + new_car.get_width() + sensors(3) > 140) # boolean
+    if (not is_wall): # start or continuation of an obstacle
+        if (obstacle_start(0) == 0 and obstacle_start(1) == 0): # start of obstacle
+            obstacle_start(0) = obstacle_x
+            obstacle_start(1) = obstacle_y
+        else: # continuation of an obstacle
+            obstacle_length = abs(obstacle_start(0) - obstacle_x + obstacle_start(1) - obstacle_y)
+    else:
+        if (obstacle_start(0) == 0 and obstacle_start(1) == 0 and obstacle_length > 0): # right after an obstacle side is finished
+            if (num_of_turns == 0): # first turn for this object
+                obstacle = Obstacle(obstacle_start(0), obstacle_start(1), canvas)
+                obstacle.set_side(obstacle_length, canvas)
+                obstacle_queue.append(obstacle)
+            elif (num_of_turns > 0 and num_of_turns < 4):
+                counter = 0
+                for obstacle in obstacle_queue:
+                    # not sure how to figure out which obstacle to add to :/
+                    obstacle.set_side(obstacle_length,canvas)
+            obstacle_length = 0
+            obstacle_start = (0,0)
+                
 
 
-    window.after(100, check, car, obstacle_tracker, canvas, window)
+    window.after(100, check, car, obstacle_length, obstacle_start, canvas, window)
 
 def main():
 
@@ -133,8 +166,9 @@ def main():
 
     # car starts with nothing but wall in the right sensor
     obstacle_length = 0
+    obstacle_start = (0,0)
 
-    window.after(100, check, car, obstacle_length, canvas, window) # call check() to check car and obstacle after 100 milliseconds
+    window.after(100, check, car, obstacle_length, obstacle_start, canvas, window) # call check() to check car and obstacle after 100 milliseconds
     window.mainloop() # tk.mainloop() -> keep looping until there's an update
 
 main()
