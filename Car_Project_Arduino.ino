@@ -81,6 +81,56 @@ void setup()
   analogWrite(enableB_H2, 255);
 
   delay(2000);
+
+  //Sensor 1
+  digitalWrite(trigPin1, LOW);
+  delayMicroseconds(2);
+  
+  digitalWrite(trigPin1, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin1, LOW);
+
+  duration1 = pulseIn(echoPin1, HIGH);
+  double distance1 = (double)duration1 * 345 / 2 / 1000000;
+
+  //Read distance on sensor 2
+  delayMicroseconds(2);
+  digitalWrite(trigPin1, LOW);
+  delayMicroseconds(2);
+  
+  digitalWrite(trigPin2, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin2, LOW);
+  
+  duration2 = pulseIn(echoPin2, HIGH);
+  double distance2 = (double)duration2 * 345 / 2 / 1000000;
+
+  //Read distance on sensor 3
+  delayMicroseconds(2);
+  digitalWrite(trigPin3, LOW);
+  delayMicroseconds(2);
+  
+  digitalWrite(trigPin3, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin3, LOW);
+  
+  duration3 = pulseIn(echoPin3, HIGH);
+  double distance3 = (double)duration3 * 345 / 2 / 1000000;
+
+  //Read distance on sensor 4
+  delayMicroseconds(2);
+  digitalWrite(trigPin4, LOW);
+  delayMicroseconds(2);
+  
+  digitalWrite(trigPin4, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin4, LOW);
+  
+  duration4 = pulseIn(echoPin4, HIGH);
+  double distance4 = (double)duration4 * 345 / 2 / 1000000;
+
+  String data = String(String(distance1) + "," + String(distance2) + "," + String(distance3) + "," + String(distance4) + "," + String(turn_counter));
+  Serial.println(data);
 }
 
 void loop() 
@@ -178,7 +228,7 @@ void turn_right()
   digitalWrite(motorPin3_H2, HIGH);
   digitalWrite(motorPin4_H2, LOW);
 
-  delay(2900);
+  delay(2850);
 }
 
 void turn_left()
