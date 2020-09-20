@@ -26,10 +26,11 @@ class Car:
     def __init__(self, canvas):
         # initialize position of car and map it on canvas
         # <self> refers to the class itself. Below codes are essentially "attributes" for Car's class
-        sensor_string = SerialPort.read() # !!! make sure to have an output for arduino at the start of the arduino !!!
-        self.sensors = sensor_string.split(',')
+        sensor_string = SerialPort.readline() # !!! make sure to have an output for arduino at the start of the arduino !!!
+        sensor_string_decoded = str(sensor_string[0:lend(sensor_string)].decode('utf-8')
+        self.sensors = sensor_string_decoded.split(',')
         for i in range(0, len(sensors)): # convert to ints
-            sensors[i] = int(sensors[i])
+            sensors[i] = double(sensors[i])
         self.width = 25.5
         self.height = 24.3
         # TEST: self.sensors = [0, WINDOW_HEIGHT-self.height, WINDOW_HEIGHT-self.height, WINDOW_WIDTH-self.width]
@@ -73,17 +74,26 @@ class Obstacle:
         self.top = 0
         self.bottom = 0
 
+        self.numofsides = 0 # starts out with 0 known sides
+
         self.draw(canvas)
+
+    def get_numofsides(self):
+        return numofsides
 
     def set_side(self, side_length, canvas):
         if (self.left == 0):
             self.left = side_length
+            numofsides = 1
         elif (self.top == 0):
             self.top = side_length
+            numofsides = 2
         elif (self.right == 0):
             self.right = side_length
+            numofsides = 3
         elif (self.bottom == 0):
             self.bottom = side_length
+            numofsides = 4
             # try to draw rectangle now that we have set the side lengths
             self.draw(canvas)
     
@@ -117,18 +127,19 @@ def check(car, obstacle_length, obstacle_start, canvas, window):
     car_queue.append(new_car)
 
     # check sensors for obstacle
-    sensor_string = SerialPort.read()
-    sensors = sensor_string.split(',')
-    for i in range(0, len(sensors)): # convert to ints
-        sensors[i] = int(sensors[i])
+    sensor_string = SerialPort.readline()
+    sensor_string_decoded = str(sensor_string[0:lend(sensor_string)].decode('utf-8')
+    sensors = sensor_string_decoded.rstrip().split(',')
+    for i in range(0, len(sensors)): # convert to doubles
+        sensors[i] = double(sensors[i])
     num_of_turns = sensors(4)
 
     # find position of obstacle
     obstacle_x = new_car.getx() + new_car.get_width() + sensors(3)
-    obstacle_y = new_car.gety() + new_car.get_height() - 12.3 # takse into account the placement of the sensors
+    obstacle_y = new_car.gety() + new_car.get_height() - 12.3 # takes into account the placement of the sensors
 
     # find out whether the object is a wall or not
-    is_wall = (sensors(0) + new_car.get_width() + sensors(3) > 140) # boolean
+    is_wall = (sensors(0) + new_car.get_width() + sensors(3) > 130) # boolean
     if (not is_wall): # start or continuation of an obstacle
         if (obstacle_start(0) == 0 and obstacle_start(1) == 0): # start of obstacle
             obstacle_start(0) = obstacle_x
@@ -142,10 +153,27 @@ def check(car, obstacle_length, obstacle_start, canvas, window):
                 obstacle.set_side(obstacle_length, canvas)
                 obstacle_queue.append(obstacle)
             elif (num_of_turns > 0 and num_of_turns < 4):
-                counter = 0
-                for obstacle in obstacle_queue:
-                    # not sure how to figure out which obstacle to add to :/
-                    obstacle.set_side(obstacle_length,canvas)
+                # check to see if there is one object; if there is, then just add the side to it
+                obstacle_tracker = (0,0) # first item is the number of sides the highest is (furthest down the list), second is which object this corresponds to
+                if(len(obstacle_queue()) == 1):
+                    obstacle_queue(0).set_side(obstacle_length)
+                else:
+                    # check to see if the number of sides on the first equals the number of sides on the last
+                    if (obstacle_queue(0).get_numofsides() == obstacle_queue(len(obstacle_queue)-1)).get_numofsides():
+                        # then, just add the side to the first object
+                        obstacle_queue(0).set_side(obstacle_length)
+                    else:
+                        # first item is the number of sides the highest is (furthest down the list), second is which object this corresponds to
+                        obstacle_tracker = (0,0)
+                        for i in range(0, len(obstacle_queue)):
+                            # not sure how to figure out which obstacle to add to :/
+                            obs = obstacle_queue(i)
+                            if (obs.get_numofsides() >= num_of_turns): # greater than or equal to, then keep track
+                                obstacle_tracker(0) = obs.get_numofsides()
+                                obstacle_tracker(1) = i
+                        # update the obstacle that needs to be updated
+                        obstacle_queue(obstacle_tracker(0)+1).set_side(obstacle_length)
+                        # obstacle.set_side(obstacle_length,canvas)
             obstacle_length = 0
             obstacle_start = (0,0)
                 
