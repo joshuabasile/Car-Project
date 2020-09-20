@@ -44,7 +44,7 @@ class Car:
             self.x = coords[0]
             self.y = coords[1]
             self.draw(canvas)
-        elif (reset_car == true)
+        elif (reset_car == true):
             self.x = 0
             self.y = 0
 
