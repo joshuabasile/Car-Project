@@ -135,7 +135,7 @@ def check(car, obstacle_length, obstacle_start, canvas, window):
     sensors = sensor_string_decoded.rstrip().split(',')
     for i in range(0, len(sensors)): # convert to doubles
         sensors[i] = float(sensors[i])
-    num_of_turns = sensors[4]]
+    num_of_turns = sensors[4]
 
     # find position of obstacle
     obstacle_x = new_car.getx() + new_car.get_width() + sensors[3]
