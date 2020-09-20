@@ -27,7 +27,7 @@ class Car:
         # initialize position of car and map it on canvas
         # <self> refers to the class itself. Below codes are essentially "attributes" for Car's class
         sensor_string = SerialPort.readline() # !!! make sure to have an output at the start of the arduino's run !!!
-        sensor_string_decoded = str(sensor_string[0:lend(sensor_string)].decode('utf-8')
+        sensor_string_decoded = str(sensor_string[0:lend(sensor_string)].decode('utf-8'))
         sensors = sensor_string_decoded.split(',')
         for i in range(0, len(sensors)): # convert to ints
             sensors[i] = double(sensors[i])
@@ -127,55 +127,55 @@ def check(car, obstacle_length, obstacle_start, canvas, window):
     car_queue.append(new_car)
 
     # check sensors for obstacle
-    sensor_string = SerialPort.readline()
-    sensor_string_decoded = str(sensor_string[0:lend(sensor_string)].decode('utf-8')
-    sensors = sensor_string_decoded.rstrip().split(',')
+    sensor_string = SerialPort.readline() # !!! make sure to have an output at the start of the arduino's run !!!
+    sensor_string_decoded = str(sensor_string[0:lend(sensor_string)].decode('utf-8'))
+    sensors = sensor_string_decoded.split(',')
     for i in range(0, len(sensors)): # convert to doubles
         sensors[i] = double(sensors[i])
     num_of_turns = sensors(4)
 
     # find position of obstacle
-    obstacle_x = new_car.getx() + new_car.get_width() + sensors(3)
+    obstacle_x = new_car.getx() + new_car.get_width() + sensors[3]
     obstacle_y = new_car.gety() + new_car.get_height() - 12.3 # takes into account the placement of the sensors
 
     # find out whether the object is a wall or not
-    is_wall = (sensors(0) + new_car.get_width() + sensors(3) > 130) # boolean
+    is_wall = (sensors[0] + new_car.get_width() + sensors[3] > 130) # boolean
     if (not is_wall): # start or continuation of an obstacle
-        if (obstacle_start(0) == 0 and obstacle_start(1) == 0): # start of obstacle
-            obstacle_start(0) = obstacle_x
-            obstacle_start(1) = obstacle_y
+        if (obstacle_start[0] == 0 and obstacle_start[1] == 0): # start of obstacle
+            obstacle_start[0] = obstacle_x
+            obstacle_start[1] = obstacle_y
         else: # continuation of an obstacle
-            obstacle_length = abs(obstacle_start(0) - obstacle_x + obstacle_start(1) - obstacle_y)
+            obstacle_length = abs(obstacle_start[0] - obstacle_x + obstacle_start[1] - obstacle_y)
     else:
-        if (obstacle_start(0) == 0 and obstacle_start(1) == 0 and obstacle_length > 0): # right after an obstacle side is finished
+        if (obstacle_start[0] == 0 and obstacle_start[1] == 0 and obstacle_length > 0): # right after an obstacle side is finished
             if (num_of_turns == 0): # first turn for this object
-                obstacle = Obstacle(obstacle_start(0), obstacle_start(1), canvas)
+                obstacle = Obstacle(obstacle_start[0], obstacle_start[1], canvas)
                 obstacle.set_side(obstacle_length, canvas)
                 obstacle_queue.append(obstacle)
             elif (num_of_turns > 0 and num_of_turns < 4):
                 # check to see if there is one object; if there is, then just add the side to it
-                obstacle_tracker = (0,0) # first item is the number of sides the highest is (furthest down the list), second is which object this corresponds to
+                obstacle_tracker = [0,0] # first item is the number of sides the highest is (furthest down the list), second is which object this corresponds to
                 if(len(obstacle_queue()) == 1):
-                    obstacle_queue(0).set_side(obstacle_length)
+                    obstacle_queue[0].set_side(obstacle_length)
                 else:
                     # check to see if the number of sides on the first equals the number of sides on the last
-                    if (obstacle_queue(0).get_numofsides() == obstacle_queue(len(obstacle_queue)-1)).get_numofsides():
+                    if (obstacle_queue[0].get_numofsides() == obstacle_queue(len(obstacle_queue)-1)).get_numofsides():
                         # then, just add the side to the first object
-                        obstacle_queue(0).set_side(obstacle_length)
+                        obstacle_queue[0].set_side(obstacle_length)
                     else:
                         # first item is the number of sides the highest is (furthest down the list), second is which object this corresponds to
-                        obstacle_tracker = (0,0)
+                        obstacle_tracker = [0,0]
                         for i in range(0, len(obstacle_queue)):
                             # not sure how to figure out which obstacle to add to :/
-                            obs = obstacle_queue(i)
+                            obs = obstacle_queue[i]
                             if (obs.get_numofsides() >= num_of_turns): # greater than or equal to, then keep track
-                                obstacle_tracker(0) = obs.get_numofsides()
-                                obstacle_tracker(1) = i
+                                obstacle_tracker[0] = obs.get_numofsides()
+                                obstacle_tracker[1] = i
                         # update the obstacle that needs to be updated
-                        obstacle_queue(obstacle_tracker(0)+1).set_side(obstacle_length)
+                        obstacle_queue[obstacle_tracker[0]+1].set_side(obstacle_length)
                         # obstacle.set_side(obstacle_length,canvas)
             obstacle_length = 0
-            obstacle_start = (0,0)
+            obstacle_start = [0,0]
                 
 
     window.update()
@@ -194,7 +194,7 @@ def main():
 
     # car starts with nothing but wall in the right sensor
     obstacle_length = 0
-    obstacle_start = (0,0)
+    obstacle_start = [0,0]
 
     window.after(100, check, car, obstacle_length, obstacle_start, canvas, window) # call check() to check car and obstacle after 100 milliseconds
     window.mainloop() # tk.mainloop() -> keep looping until there's an update
