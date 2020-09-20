@@ -25,7 +25,7 @@ def find_coords(width, height, l_pos, l_f_pos, r_f_pos, r_pos):
 
 
 class Car:
-    def __init__(self, SerialPort, canvas):
+    def __init__(self, reset_car, SerialPort, canvas):
         # initialize position of car and map it on canvas
         # <self> refers to the class itself. Below codes are essentially "attributes" for Car's class
         #SerialPort = serial.Serial("COM5", "9600", timeout=1)
@@ -37,13 +37,14 @@ class Car:
         if (sensors[0] != ''):
             for i in range(0, len(sensors)):  # convert to ints
                 sensors[i] = float(sensors[i])*100
+            sensors[-1] = sensors[-1]/100
             print(sensors)
             # TEST: self.sensors = [0, WINDOW_HEIGHT-self.height, WINDOW_HEIGHT-self.height, WINDOW_WIDTH-self.width]
             coords = find_coords(self.width, self.height, sensors[0], sensors[1], sensors[2], sensors[3])
             self.x = coords[0]
             self.y = coords[1]
             self.draw(canvas)
-        else:
+        elif (reset_car == true)
             self.x = 0
             self.y = 0
 
@@ -140,10 +141,10 @@ def check(car, obstacle_length, obstacle_start, SerialPort, canvas, window):
     # check sensors for obstacle
     #SerialPort = serial.Serial("COM5", "9600", timeout=1)
     sensor_string = SerialPort.readline()  # !!! make sure to have an output at the start of the arduino's run !!!
-    if (sensor_string):
-        sensor_string_decoded = str(sensor_string.decode('utf-8'))
-        sensors = sensor_string_decoded.rstrip().split(',')
-        new_car = Car(SerialPort, canvas)
+    sensor_string_decoded = str(sensor_string.decode('utf-8'))
+    sensors = sensor_string_decoded.rstrip().split(',')
+    if (sensors[0] != ''):
+        new_car = Car(SerialPort, false, canvas)
         car_queue.append(new_car)
 
         for i in range(0, len(sensors)):  # convert to doubles
@@ -163,8 +164,7 @@ def check(car, obstacle_length, obstacle_start, SerialPort, canvas, window):
             else:  # continuation of an obstacle
                 obstacle_length = abs(obstacle_start[0] - obstacle_x + obstacle_start[1] - obstacle_y)
         else:
-            if (obstacle_start[0] == 0 and obstacle_start[
-                1] == 0 and obstacle_length > 0):  # right after an obstacle side is finished
+            if (obstacle_start[0] == 0 and obstacle_start[1] == 0 and obstacle_length > 0):  # right after an obstacle side is finished
                 if (num_of_turns == 0):  # first turn for this object
                     obstacle = Obstacle(obstacle_start[0], obstacle_start[1], canvas)
                     obstacle.set_side(obstacle_length, canvas)
@@ -208,7 +208,7 @@ def main():
     SerialPort = serial.Serial("COM5", "9600", timeout=1)
 
     # create car
-    car = Car(SerialPort, canvas)
+    car = Car(SerialPort, true, canvas)
 
     # car starts with nothing but wall in the right sensor
     obstacle_length = 0
