@@ -36,8 +36,7 @@ class Car:
         sensors = sensor_string_decoded.rstrip().split(',')
         if (sensors[0] != ''):
             for i in range(0, len(sensors)):  # convert to ints
-                sensors[i] = float(sensors[i])
-
+                sensors[i] = float(sensors[i])*100
             print(sensors)
             # TEST: self.sensors = [0, WINDOW_HEIGHT-self.height, WINDOW_HEIGHT-self.height, WINDOW_WIDTH-self.width]
             coords = find_coords(self.width, self.height, sensors[0], sensors[1], sensors[2], sensors[3])
@@ -148,7 +147,7 @@ def check(car, obstacle_length, obstacle_start, SerialPort, canvas, window):
         car_queue.append(new_car)
 
         for i in range(0, len(sensors)):  # convert to doubles
-            sensors[i] = float(sensors[i])
+            sensors[i] = float(sensors[i])*100
         num_of_turns = sensors[4]
 
         # find position of obstacle
