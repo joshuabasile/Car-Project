@@ -26,10 +26,12 @@ class Car:
     def __init__(self, canvas):
         # initialize position of car and map it on canvas
         # <self> refers to the class itself. Below codes are essentially "attributes" for Car's class
-        # self.sensors = arduino.read() # !!! make sure to have an output for arduino at the start of the arduino !!!
+        sensor_string = arduino.read() # !!! make sure to have an output for arduino at the start of the arduino !!!
+        self.sensors = sensor_string.split(',')
         self.width = 25.5
         self.height = 24.3
         self.sensors = [0, WINDOW_HEIGHT-self.height, WINDOW_HEIGHT-self.height, WINDOW_WIDTH-self.width]
+        # TEST: self.sensors = [0, WINDOW_HEIGHT-self.height, WINDOW_HEIGHT-self.height, WINDOW_WIDTH-self.width]
         coords = find_coords(self.width, self.height, self.sensors[0], self.sensors[1], self.sensors[2], self.sensors[3])
         self.x = coords[0]
         self.y = coords[1]
@@ -50,31 +52,49 @@ class Car:
         # store car at the list
         car_queue.append(x)
 
+    def move(self, x, y, canvas):
+        # moves car to next spot based on distance 
+
 class Obstacle:
-    def __init__ (self, x, y, size_x, size_y, canvas):
+    def __init__ (self, x, y, canvas):
+        # x and y correspond to the left bottom corner of the object
         self.x = x
         self.y = y
-        self.size_x = size_x
-        self.size_y = size_y
+
+        self.left = 0
+        self.right = 0
+        self.top = 0
+        self.bottom = 0
 
         self.draw(canvas)
+
+    def set_side(self, side_length, canvas):
+        if (self.left == 0):
+            self.left = side_length
+        elif (self.top == 0):
+            self.top = side_length
+        elif (self.right == 0):
+            self.right = side_length
+        elif (self.bottom == 0):
+            self.bottom = side_length
+            # try to draw rectangle now that we have set the side lengths
+            self.draw(canvas)
     
     def draw(self, canvas):
         # remove obstacle from the list if the list is not empty
         # if len(obstacle_queue) != 0: # len() return amount of data in the parameter
         #     obstacle_queue.pop()
-
-        size_x = 19.3
-        size_y = 16.5
-
         # create white obstacle on canvas. create_square(x1, y1, x2, y2) draws a square.
         # Top left is at (x1, y1). Bottom right at (x2, y2)
+
+        # don't draw until all four sides are found
+        self.width = (self.left + self.right)/2
+        self.height = (self.top + self.bottom)/2
         x = canvas.create_rectangle(self.x, WINDOW_HEIGHT-self.height-self.y, self.x + self.width, WINDOW_HEIGHT-self.y, fill='yellow')
         # store obstacle at the list
         obstacle_queue.append(x)
 
-# check if car is close to obstacle
-def check(obstacle, car, canvas, window):
+def check(obstacle, obstacle_tracker, canvas, window):
     ### don't think we need this code since arduino does it for us
 
     # if obstacle.x - 4 <= car.x <= obstacle.x + 4 \
@@ -84,16 +104,14 @@ def check(obstacle, car, canvas, window):
     #    car_queue.pop() # remove car from list
         ## code for moving around obstacle
 
-    ### pseudocode for this part
-    # is_obstacle = arduino.read()
-    # 
+    # check sensors for obstacle
+    sensor_string = arduino.read()
+    sensors = sensor_string.split(',')
+    num_of_turns = sensors(4)
+
     
 
-
-    # exit()
-    
-
-    window.after(100, check, car, obstacle, canvas, window)
+    window.after(100, check, obstacle, obstacle_tracker, canvas, window)
 
 def main():
 
@@ -102,13 +120,14 @@ def main():
     window = tk.Tk() # create window pop-up
     canvas = tk.Canvas(window, width=WINDOW_WIDTH, height=WINDOW_HEIGHT, bg='black') # Canvas widget is for drawing
     canvas.pack() # pack() organize, aka update, widgets onto canvas
-    
-    # create obstacle
-    obstacle = Obstacle(canvas)
-    # create car
-    car = Car(canvas)
 
-    window.after(100, check, car, obstacle, canvas, window) # call check() to check car and obstacle after 100 milliseconds
+    # create car
+    # car = Car(canvas)
+
+    # car starts with nothing but wall in the right sensor
+    obstacle_tracker = 0
+
+    window.after(100, check, obstacle, obstacle_tracker, canvas, window) # call check() to check car and obstacle after 100 milliseconds
     window.mainloop() # tk.mainloop() -> keep looping until there's an update
 
 main()
