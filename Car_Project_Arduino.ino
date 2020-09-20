@@ -79,6 +79,8 @@ void setup()
   analogWrite(enableB_H1, 255);
   analogWrite(enableA_H2, 255);
   analogWrite(enableB_H2, 255);
+
+  delay(2000);
 }
 
 void loop() 
@@ -94,7 +96,6 @@ void loop()
   duration1 = pulseIn(echoPin1, HIGH);
   double distance1 = (double)duration1 * 345 / 2 / 1000000;
 
-  
   //Read distance on sensor 2
   delayMicroseconds(2);
   digitalWrite(trigPin1, LOW);
@@ -141,7 +142,13 @@ void loop()
   }
 
   String data = String(String(distance1) + "," + String(distance2) + "," + String(distance3) + "," + String(distance4) + "," + String(turn_counter));
-  
+  Serial.println(data);
+
+  if (turn_counter == 4)
+  {
+    while (1)
+      stop_moving();
+  }
 }
 
 void forward()
