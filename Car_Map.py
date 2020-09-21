@@ -40,22 +40,22 @@ class Car:
         #SerialPort = serial.Serial("COM5", "9600", timeout=1)
         self.width = 25.5
         self.height = 24.3
-        sensor_string = SerialPort.readline()  # !!! make sure to have an output at the start of the arduino's run !!!
-        sensor_string_decoded = str(sensor_string.decode('utf-8'))
-        sensors = sensor_string_decoded.rstrip().split(',')
-        if (sensors[0] != ''):
-            for i in range(0, len(sensors)):  # convert to ints
-                sensors[i] = float(sensors[i])*100
-            sensors[-1] = sensors[-1]/100
-            print(sensors)
-            # TEST: self.sensors = [0, WINDOW_HEIGHT-self.height, WINDOW_HEIGHT-self.height, WINDOW_WIDTH-self.width]
-            coords = find_coords(0, self.width, self.height, sensors[0], sensors[1], sensors[2])
-            self.x = coords[0]
-            self.y = coords[1]
-            self.draw(canvas)
-        elif (reset_car == True):
-            self.x = 0
-            self.y = WINDOW_HEIGHT
+        # sensor_string = SerialPort.readline()  # !!! make sure to have an output at the start of the arduino's run !!!
+        # sensor_string_decoded = str(sensor_string.decode('utf-8'))
+        # sensors = sensor_string_decoded.rstrip().split(',')
+        # if (sensors[0] != ''):
+        #    for i in range(0, len(sensors)):  # convert to ints
+        #        sensors[i] = float(sensors[i])*100
+        #    sensors[-1] = sensors[-1]/100
+        #    print(sensors)
+        #    # TEST: self.sensors = [0, WINDOW_HEIGHT-self.height, WINDOW_HEIGHT-self.height, WINDOW_WIDTH-self.width]
+        #    coords = find_coords(0, self.width, self.height, sensors[0], sensors[1], sensors[2])
+        #    self.x = coords[0]
+        #    self.y = coords[1]
+        #    self.draw(canvas)
+        #elif (reset_car == True):
+        self.x = 0
+        self.y = WINDOW_HEIGHT
 
     def getx(self):
         return self.x
@@ -87,7 +87,7 @@ class Car:
 
     def move(self, sensors, canvas):
         # move car to appropriate position based on sensors
-
+        print(sensors)
         # car is sideways or not
         if (sensors[4] == 1 or sensors[4] == 3):
             # switch width & height
