@@ -85,6 +85,25 @@ class Car:
         # store car at the list
         car_queue.append(x)
 
+    def move(self, sensors, canvas):
+        # move car to appropriate position based on sensors
+
+        # car is sideways or not
+        if (sensors[4] == 1 or sensors[4] == 3):
+            # switch width & height
+            self.width = 24.3
+            self.height = 25.5
+        elif (sensors[4] == 0 or sensors[4] == 2):
+            self.width = 25.5
+            self.height = 24.3
+        
+        # move based on direction
+        coords = find_coords(sensors[4], self.width, self.height, sensors[0], sensors[1], sensors[2])
+        self.x = coords[0]
+        self.y = coords[1]
+        self.draw(canvas)
+
+
 
 class Obstacle:
     def __init__(self, x, y, canvas):
@@ -153,16 +172,17 @@ def check(car, obstacle_length, obstacle_start, SerialPort, canvas, window):
     sensor_string_decoded = str(sensor_string.decode('utf-8'))
     sensors = sensor_string_decoded.rstrip().split(',')
     if (sensors[0] != ''):
-        new_car = Car(False, SerialPort, canvas)
-        car_queue.append(new_car)
-
         for i in range(0, len(sensors)):  # convert to doubles
             sensors[i] = float(sensors[i])*100
-        num_of_turns = sensors[4]
+        sensors[-1] = sensors[-1]/100
 
+        ### move the car
+        car.move(sensors, canvas)
+
+        num_of_turns = sensors[4]
         # find position of obstacle
-        obstacle_x = new_car.getx() + new_car.get_width() + sensors[3]
-        obstacle_y = new_car.gety() + new_car.get_height() - 12.3  # takes into account the placement of the sensors
+        obstacle_x = car.getx() + car.get_width() + sensors[3]
+        obstacle_y = car.gety() + car.get_height() - 12.3  # takes into account the placement of the sensors
 
         # find out whether the object is a wall or not
         is_wall = (sensors[0] + new_car.get_width() + sensors[3] > 130)  # boolean
@@ -203,7 +223,6 @@ def check(car, obstacle_length, obstacle_start, SerialPort, canvas, window):
                             # obstacle.set_side(obstacle_length,canvas)
                 obstacle_length = 0
                 obstacle_start = [0, 0]
-        car = new_car
 
     window.update()
     window.after(100, check, car, obstacle_length, obstacle_start, SerialPort, canvas, window)
