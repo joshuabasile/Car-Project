@@ -87,7 +87,6 @@ class Car:
 
     def move(self, sensors, canvas):
         # move car to appropriate position based on sensors
-        print(sensors)
         # car is sideways or not
         if (sensors[4] == 1 or sensors[4] == 3):
             # switch width & height
@@ -127,15 +126,19 @@ class Obstacle:
         if (self.left == 0):
             self.left = side_length
             self.numofsides = 1
+            print("1 side")
         elif (self.top == 0):
             self.top = side_length
             self.numofsides = 2
+            print("2 side")
         elif (self.right == 0):
             self.right = side_length
             self.numofsides = 3
+            print("3 side")
         elif (self.bottom == 0):
             self.bottom = side_length
             self.numofsides = 4
+            print("4 side")
             # try to draw rectangle now that we have set the side lengths
             self.draw(canvas)
 
@@ -170,7 +173,6 @@ def check(car, obstacle_length, obstacle_start, SerialPort, canvas, window):
     #SerialPort = serial.Serial("COM5", "9600", timeout=1)
     sensor_string = SerialPort.readline()  # !!! make sure to have an output at the start of the arduino's run !!!
     sensor_string_decoded = str(sensor_string.decode('utf-8'))
-    print(sensor_string_decoded)
     sensors = sensor_string_decoded.rstrip().split(',')
     if (sensors[0] != ''):
         for i in range(0, len(sensors)):  # convert to doubles
@@ -188,22 +190,29 @@ def check(car, obstacle_length, obstacle_start, SerialPort, canvas, window):
         # find out whether the object is a wall or not
         is_wall = (sensors[0] + car.get_width() + sensors[3] > 130)  # boolean
         if (not is_wall):  # start or continuation of an obstacle
+            print("no wall yet")
             if (obstacle_start[0] == 0 and obstacle_start[1] == 0):  # start of obstacle
+                print("begin side")
                 obstacle_start[0] = obstacle_x
                 obstacle_start[1] = obstacle_y
             else:  # continuation of an obstacle
+                print("continue side")
                 obstacle_length = abs(obstacle_start[0] - obstacle_x + obstacle_start[1] - obstacle_y)
         else:
             if (obstacle_start[0] == 0 and obstacle_start[1] == 0 and obstacle_length > 0):  # right after an obstacle side is finished
+                print("finish side")
                 if (num_of_turns == 0):  # first turn for this object
+                    print("create new obstacle")
                     obstacle = Obstacle(obstacle_start[0], obstacle_start[1], canvas)
                     obstacle.set_side(obstacle_length, canvas)
                     obstacle_queue.append(obstacle)
                 elif (num_of_turns > 0 and num_of_turns < 4):
+                    print("add to existing obstacle")
                     # check to see if there is one object; if there is, then just add the side to it
                     obstacle_tracker = [0,
                                         0]  # first item is the number of sides the highest is (furthest down the list), second is which object this corresponds to
                     if (len(obstacle_queue) == 1):
+                        print("add to side")
                         obstacle_queue[0].set_side(obstacle_length)
                     else:
                         # check to see if the number of sides on the first equals the number of sides on the last
