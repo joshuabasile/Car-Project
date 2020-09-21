@@ -18,10 +18,18 @@ def find_coords(turns, width, height, l_pos, l_f_pos, r_f_pos):
     # l_pos, l_f_pos, r_f_pos, and r_pos are the distances btwn car and object
     coords = [0, 0]
     f_pos = (l_f_pos + r_f_pos) / 2
-    if (turns == 0)
+    if (turns == 0):
         coords[0] = l_pos # x coord
         coords[1] =  f_pos + height # y coord
-
+    elif (turns == 1):
+        coords[0] = WINDOW_WIDTH - f_pos
+        coords[1] = l_pos + WINDOW_HEIGHT
+    elif (turns == 2):
+        coords[0] = WINDOW_WIDTH - width - l_pos
+        coords[1] = WINDOW_HEIGHT - f_pos
+    elif (turns == 3):
+        coords[0] = f_pos
+        coords[1] = WINDOW_HEIGHT - l_pos
     return coords
 
 
