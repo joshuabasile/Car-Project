@@ -23,7 +23,7 @@ def find_coords(turns, width, height, l_pos, l_f_pos, r_f_pos):
         coords[1] =  f_pos + height # y coord
     elif (turns == 1):
         coords[0] = WINDOW_WIDTH - f_pos
-        coords[1] = l_pos + WINDOW_HEIGHT
+        coords[1] = l_pos + height
     elif (turns == 2):
         coords[0] = WINDOW_WIDTH - width - l_pos
         coords[1] = WINDOW_HEIGHT - f_pos
@@ -226,11 +226,8 @@ def check(car, obstacle_length, obstacle_start, SerialPort, canvas, window):
                 obstacle_start = [0, 0]
 
     window.update()
-<<<<<<< HEAD
-    window.after(500, check, car, obstacle_length, obstacle_start, SerialPort, canvas, window)
-=======
-    window.after(50, check, car, obstacle_length, obstacle_start, SerialPort, canvas, window)
->>>>>>> 50c5eef0dee5e9158512fdb238cc554cac96c367
+
+    window.after(1, check, car, obstacle_length, obstacle_start, SerialPort, canvas, window)
 
 
 def main():
@@ -247,11 +244,7 @@ def main():
     obstacle_length = 0
     obstacle_start = [0, 0]
 
-<<<<<<< HEAD
-    window.after(500, check, car, obstacle_length, obstacle_start, SerialPort, canvas, window)  # call check() to check car and obstacle after 100 milliseconds
-=======
-    window.after(50, check, car, obstacle_length, obstacle_start, SerialPort, canvas, window)  # call check() to check car and obstacle after 100 milliseconds
->>>>>>> 50c5eef0dee5e9158512fdb238cc554cac96c367
+    window.after(1, check, car, obstacle_length, obstacle_start, SerialPort, canvas, window)  # call check() to check car and obstacle after 100 milliseconds
     window.mainloop()  # tk.mainloop() -> keep looping until there's an update
 
 
