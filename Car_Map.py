@@ -226,7 +226,11 @@ def check(car, obstacle_length, obstacle_start, SerialPort, canvas, window):
                 obstacle_start = [0, 0]
 
     window.update()
+<<<<<<< HEAD
     window.after(500, check, car, obstacle_length, obstacle_start, SerialPort, canvas, window)
+=======
+    window.after(50, check, car, obstacle_length, obstacle_start, SerialPort, canvas, window)
+>>>>>>> 50c5eef0dee5e9158512fdb238cc554cac96c367
 
 
 def main():
@@ -243,7 +247,11 @@ def main():
     obstacle_length = 0
     obstacle_start = [0, 0]
 
+<<<<<<< HEAD
     window.after(500, check, car, obstacle_length, obstacle_start, SerialPort, canvas, window)  # call check() to check car and obstacle after 100 milliseconds
+=======
+    window.after(50, check, car, obstacle_length, obstacle_start, SerialPort, canvas, window)  # call check() to check car and obstacle after 100 milliseconds
+>>>>>>> 50c5eef0dee5e9158512fdb238cc554cac96c367
     window.mainloop()  # tk.mainloop() -> keep looping until there's an update
 
 
