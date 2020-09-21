@@ -22,7 +22,7 @@ def find_coords(turns, width, height, l_pos, l_f_pos, r_f_pos):
         coords[0] = l_pos # x coord
         coords[1] =  f_pos + height # y coord
     elif (turns == 1):
-        coords[0] = WINDOW_WIDTH - f_pos
+        coords[0] = WINDOW_WIDTH - f_pos - width
         coords[1] = l_pos + height
     elif (turns == 2):
         coords[0] = WINDOW_WIDTH - width - l_pos
