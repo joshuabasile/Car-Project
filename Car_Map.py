@@ -185,7 +185,7 @@ def check(car, obstacle_length, obstacle_start, SerialPort, canvas, window):
         obstacle_y = car.gety() + car.get_height() - 12.3  # takes into account the placement of the sensors
 
         # find out whether the object is a wall or not
-        is_wall = (sensors[0] + new_car.get_width() + sensors[3] > 130)  # boolean
+        is_wall = (sensors[0] + car.get_width() + sensors[3] > 130)  # boolean
         if (not is_wall):  # start or continuation of an obstacle
             if (obstacle_start[0] == 0 and obstacle_start[1] == 0):  # start of obstacle
                 obstacle_start[0] = obstacle_x
