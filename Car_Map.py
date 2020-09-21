@@ -14,12 +14,13 @@ obstacle_queue = []  # list position array for obstacles
 
 
 # function to find coordinates of given spot
-def find_coords(width, height, l_pos, l_f_pos, r_f_pos):
+def find_coords(turns, width, height, l_pos, l_f_pos, r_f_pos):
     # l_pos, l_f_pos, r_f_pos, and r_pos are the distances btwn car and object
     coords = [0, 0]
     f_pos = (l_f_pos + r_f_pos) / 2
-    coords[0] = l_pos # x coord
-    coords[1] =  f_pos + height # y coord
+    if (turns == 0)
+        coords[0] = l_pos # x coord
+        coords[1] =  f_pos + height # y coord
 
     return coords
 
@@ -40,13 +41,13 @@ class Car:
             sensors[-1] = sensors[-1]/100
             print(sensors)
             # TEST: self.sensors = [0, WINDOW_HEIGHT-self.height, WINDOW_HEIGHT-self.height, WINDOW_WIDTH-self.width]
-            coords = find_coords(self.width, self.height, sensors[0], sensors[1], sensors[2])
+            coords = find_coords(0, self.width, self.height, sensors[0], sensors[1], sensors[2])
             self.x = coords[0]
             self.y = coords[1]
             self.draw(canvas)
         elif (reset_car == True):
             self.x = 0
-            self.y = MAX_HEIGHT
+            self.y = WINDOW_HEIGHT
 
     def getx(self):
         return self.x
